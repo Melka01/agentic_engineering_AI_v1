@@ -1,0 +1,34 @@
+{
+  "ok": false,
+  "error": "Agent \"story-generator\" failed on every provider",
+  "log": [
+    {
+      "level": "error",
+      "message": "agent.attempt.failed",
+      "fields": {
+        "agent": "story-generator",
+        "correlationId": "e0582e8c-2bd3-449d-a522-271b27f747c7",
+        "provider": "anthropic-primary",
+        "model": "claude-opus-5-5",
+        "attempt": 1,
+        "kind": "fatal",
+        "issues": [],
+        "err": "Could not resolve authentication method. Expected one of apiKey, authToken, credentials, config, or profile to be set. Or for one of the \"X-Api-Key\" or \"Authorization\" headers to be explicitly omitted"
+      }
+    },
+    {
+      "level": "error",
+      "message": "agent.attempt.failed",
+      "fields": {
+        "agent": "story-generator",
+        "correlationId": "e0582e8c-2bd3-449d-a522-271b27f747c7",
+        "provider": "anthropic-fallback",
+        "model": "claude-sonnet-5-5",
+        "attempt": 1,
+        "kind": "fatal",
+        "issues": [],
+        "err": "Could not resolve authentication method. Expected one of apiKey, authToken, credentials, config, or profile to be set. Or for one of the \"X-Api-Key\" or \"Authorization\" headers to be explicitly omitted"
+      }
+    }
+  ]
+}

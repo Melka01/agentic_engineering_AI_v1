@@ -65,8 +65,19 @@ function interval(comparator: Comparator, target: number): [number, number, bool
   }
 }
 
+const TIME_UNIT_MS: Readonly<Record<string, number>> = { ms: 1, s: 1_000, sec: 1_000, min: 60_000, h: 3_600_000 };
+
+/** Brings time metrics to milliseconds so "≤ 2 s" and "≥ 5000 ms" compare; other units must match exactly. */
+function toComparable(n: NonFunctionalRequirement): NonFunctionalRequirement | null {
+  if (n.metric === null) return null;
+  const factor = TIME_UNIT_MS[n.metric.unit.toLowerCase()];
+  if (factor === undefined) return { ...n, metric: { ...n.metric, unit: n.metric.unit.toLowerCase() } };
+  return { ...n, metric: { ...n.metric, target: n.metric.target * factor, unit: 'ms' } };
+}
+
 function intervalsOverlap(a: NonFunctionalRequirement, b: NonFunctionalRequirement): boolean {
   if (a.metric === null || b.metric === null) return true;
+  if (a.metric.unit !== b.metric.unit) return true; // incomparable units cannot be proven to conflict
   const [aLo, aHi, aLoIn, aHiIn] = interval(a.metric.comparator, a.metric.target);
   const [bLo, bHi, bLoIn, bHiIn] = interval(b.metric.comparator, b.metric.target);
   const lo = Math.max(aLo, bLo);
@@ -159,8 +170,10 @@ export const NFR_RULES: readonly RuleDefinition<NfrContext>[] = [
           const b = withMetric[j];
           if (a?.metric == null || b?.metric == null) continue;
           if (normaliseMetric(a.metric.name) !== normaliseMetric(b.metric.name)) continue;
-          if (a.metric.unit.toLowerCase() !== b.metric.unit.toLowerCase()) continue;
-          if (!intervalsOverlap(a, b)) {
+          const left = toComparable(a);
+          const right = toComparable(b);
+          if (left === null || right === null) continue;
+          if (!intervalsOverlap(left, right)) {
             findings.push({
               message: `NFR ${a.id} (${a.metric.comparator} ${a.metric.target} ${a.metric.unit}) conflicts with ${b.id} (${b.metric.comparator} ${b.metric.target} ${b.metric.unit}).`,
               target: nfrTarget(b),

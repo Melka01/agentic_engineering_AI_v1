@@ -15,6 +15,8 @@ platform's best practices. A risk register is derived from the findings.
 - `npm run build` — server to `dist/`, web to `web/dist/`
 - `npm run verify` — typecheck + lint + tests + build + HTTP smoke test → `reports/verification-report.md`
 - `npm run dev:server` / `npm run dev:web` — local development (web proxies `/api` to :3000)
+- `npm run docs:rules` — regenerate `docs/RULES.md` from the executable rule catalogue
+- `npm run smoke:live -- [mendix|outsystems]` — real Claude API run (needs `ANTHROPIC_API_KEY`; no fallback)
 
 ## Architecture invariants
 1. **AI proposes, rules dispose.** Agent output is parsed with zod and then judged by the
@@ -24,8 +26,12 @@ platform's best practices. A risk register is derived from the findings.
 3. **Provider-agnostic agents.** Agents talk to `LlmProvider` (`src/agents/provider.ts`) only;
    the Anthropic SDK is confined to `src/agents/anthropic-provider.ts`.
 4. **Rule engines never throw.** A crashing rule becomes an `ENGINE-001` finding.
-5. **Rule catalogue is the single source of truth** — prompts are built from the same rule
-   definitions the engines execute (`src/agents/prompts.ts`).
+5. **Rule catalogue is the single source of truth** — prompts (`src/agents/prompts.ts`) and
+   `docs/RULES.md` are generated from the same rule definitions the engines execute.
+7. **Strict enforcement:** a blueprint with error-level design findings after the repair round(s)
+   is replaced by the deterministic blueprint (`src/services/pipeline.ts`).
+8. Browser code imports only zod-free modules from `src/shared` (types, `paradigms.ts`,
+   `outsystems-layers.ts`) — zod in the bundle trips the CSP (`eval` probe).
 6. The deterministic blueprint synthesiser must produce **zero error findings** for both paradigms
    (enforced by `tests/analysis/blueprint.test.ts`).
 

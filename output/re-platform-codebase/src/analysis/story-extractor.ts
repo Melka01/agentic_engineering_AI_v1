@@ -14,7 +14,7 @@ import type {
   UserStory,
 } from '../shared/domain.js';
 import { extractObjectPhrase } from './concepts.js';
-import { KNOWN_SYSTEMS, NFR_LEXICON, TAG_LEXICON, type VerbClass } from './lexicon.js';
+import { KNOWN_SYSTEMS, NFR_LEXICON, TAG_LEXICON, VERB_CLASSES, type VerbClass, verbClassOf } from './lexicon.js';
 import {
   lowerFirst,
   singularize,
@@ -64,6 +64,7 @@ const BASE_POINTS: Readonly<Record<VerbClass, number>> = {
 };
 
 const FIBONACCI = [1, 2, 3, 5, 8, 13] as const;
+const KNOWN_VERBS = new Set(VERB_CLASSES.flatMap((c) => c.verbs));
 
 const VERIFICATION: Readonly<Record<NfrCategory, NonFunctionalRequirement['verificationMethod']>> = {
   performance: 'test',
@@ -152,7 +153,7 @@ function parseFunctional(statement: string): FunctionalParts | null {
     };
   }
   const modal = MODAL.exec(text);
-  if (modal === null) return null;
+  if (modal === null) return parsePresentTense(text);
   const subject = (modal[1] ?? '').trim();
   if (subject.length === 0 || subject.split(/\s+/).length > 5) return null;
   let predicate = (modal[2] ?? '').replace(/^be able to\s+/i, '').trim();
@@ -169,6 +170,32 @@ function parseFunctional(statement: string): FunctionalParts | null {
     goal: lowerFirst(predicate),
     benefit,
   };
+}
+
+/** "Finance officers export approved claims to SAP" — actor (1–4 words) followed by a known action verb. */
+function parsePresentTense(text: string): FunctionalParts | null {
+  const words = text.split(/\s+/);
+  for (let i = 1; i <= Math.min(4, words.length - 2); i += 1) {
+    const verb = (words[i] ?? '').toLowerCase();
+    if (verbClassOf(verb) === 'other') continue;
+    const subject = words.slice(0, i).join(' ');
+    if (NON_ACTOR_SUBJECT.test(subject) || /^(?:it|this|there|we)$/i.test(subject)) return null;
+    const base = KNOWN_VERBS.has(verb) ? verb : verb.replace(/(?:es|s)$/, '');
+    let predicate = [base, ...words.slice(i + 1)].join(' ');
+    let benefit: string | null = null;
+    const soThat = SO_THAT.exec(predicate);
+    if (soThat !== null) {
+      predicate = soThat[1] ?? predicate;
+      benefit = soThat[2] ?? null;
+    }
+    return {
+      subject,
+      role: SYSTEM_SUBJECT.test(subject) ? 'system' : normaliseRole(subject),
+      goal: predicate,
+      benefit,
+    };
+  }
+  return null;
 }
 
 function hasActorVerb(goal: string): boolean {

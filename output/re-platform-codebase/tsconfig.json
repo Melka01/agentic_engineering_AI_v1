@@ -23,6 +23,6 @@
     "declaration": false,
     "noEmit": true
   },
-  "include": ["src/**/*.ts", "tests/**/*.ts", "vitest.config.ts"],
+  "include": ["src/**/*.ts", "tests/**/*.ts", "vitest.config.ts", "scripts/**/*.ts"],
   "exclude": ["node_modules", "dist", "web", "tests/web"]
 }

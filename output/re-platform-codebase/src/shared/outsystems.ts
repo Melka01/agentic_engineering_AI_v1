@@ -14,33 +14,11 @@
  * end-user modules, no cycles) are evaluated on this model.
  */
 import { z } from 'zod';
+import { OS_MODULE_KINDS } from './outsystems-layers.js';
 
-export const OS_MODULE_KINDS = ['end-user', 'business-process', 'core-entities', 'connector', 'library'] as const;
+export { OS_LAYER_OF_KIND, OS_MODULE_KINDS, OS_RANK_OF_KIND, type OsLayer } from './outsystems-layers.js';
 export const OsModuleKindSchema = z.enum(OS_MODULE_KINDS);
 export type OsModuleKind = z.infer<typeof OsModuleKindSchema>;
-
-export type OsLayer = 'end-user' | 'core' | 'foundation';
-
-export const OS_LAYER_OF_KIND: Readonly<Record<OsModuleKind, OsLayer>> = {
-  'end-user': 'end-user',
-  'business-process': 'core',
-  'core-entities': 'core',
-  connector: 'foundation',
-  library: 'foundation',
-};
-
-/**
- * Strict rank used for dependency direction checks. A module may only reference
- * modules with a strictly lower rank, except core-entities ↔ core-entities and
- * business-process → business-process (same kind, acyclic) which are allowed.
- */
-export const OS_RANK_OF_KIND: Readonly<Record<OsModuleKind, number>> = {
-  'end-user': 4,
-  'business-process': 3,
-  'core-entities': 2,
-  connector: 1,
-  library: 1,
-};
 
 export const OsEntitySchema = z.object({
   name: z.string(),

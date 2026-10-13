@@ -91,6 +91,8 @@ export interface BlueprintPromptInput {
   readonly nfrs: readonly NonFunctionalRequirement[];
   readonly rules: readonly RuleBrief[];
   readonly guidance: readonly string[];
+  /** Error findings from the rule engine on a previous attempt (design repair round). */
+  readonly previousFindings?: readonly string[];
 }
 
 export function blueprintSystemPrompt(input: BlueprintPromptInput): string {
@@ -112,10 +114,17 @@ export function blueprintSystemPrompt(input: BlueprintPromptInput): string {
 }
 
 export function blueprintUserPrompt(input: BlueprintPromptInput): string {
+  const repair =
+    input.previousFindings !== undefined && input.previousFindings.length > 0
+      ? [
+          fence('findings', input.previousFindings.join('\n')),
+          'Your previous blueprint violated the rules listed in <findings>. Produce a corrected, complete blueprint that resolves every finding.',
+        ]
+      : ['Produce the blueprint.'];
   return [
     `Project: ${input.projectName}`,
     fence('backlog', JSON.stringify({ stories: input.stories, nfrs: input.nfrs }, null, 2)),
-    'Produce the blueprint.',
+    ...repair,
   ].join('\n\n');
 }
 

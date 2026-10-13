@@ -1,0 +1,183 @@
+{
+  "generatedAt": "2026-10-13T21:42:30.417Z",
+  "node": "v22.22.0",
+  "platform": "linux-x64",
+  "commit": "a21eee1",
+  "passed": true,
+  "steps": [
+    {
+      "name": "Type check (server + web, strict)",
+      "command": "npm run typecheck",
+      "ok": true,
+      "exitCode": 0,
+      "durationMs": 2379,
+      "outputTail": "> re-platform@1.0.0 typecheck\n> tsc -p tsconfig.json --noEmit && tsc -p web/tsconfig.json --noEmit"
+    },
+    {
+      "name": "Lint & format (Biome)",
+      "command": "npm run lint",
+      "ok": true,
+      "exitCode": 0,
+      "durationMs": 349,
+      "outputTail": "> re-platform@1.0.0 lint\n> biome check .\n\nChecked 79 files in 107ms. No fixes applied."
+    },
+    {
+      "name": "Unit, integration & UI tests (Vitest)",
+      "command": "npx vitest run --reporter=default --reporter=json --outputFile=reports/test-results.json",
+      "ok": true,
+      "exitCode": 0,
+      "durationMs": 4590,
+      "outputTail": " ✓ |node| tests/analysis/analysis.test.ts (19 tests) 99ms\n ✓ |node| tests/engines/registry.test.ts (6 tests) 43ms\n ✓ |node| tests/engines/mendix.test.ts (32 tests) 68ms\n ✓ |node| tests/engines/common-rules.test.ts (15 tests) 45ms\n ✓ |node| tests/engines/outsystems.test.ts (26 tests) 41ms\n ✓ |node| tests/shared/schemas.test.ts (3 tests) 7ms\n ✓ |web| tests/web/ParadigmSelector.test.tsx (5 tests) 426ms\n ✓ |web| tests/web/App.test.tsx (4 tests) 767ms\n   ✓ App — paradigm-driven requirements session (2)\n     ✓ creates an OutSystems session from the selector, then switches to Mendix 707ms\n\n Test Files  12 passed (12)\n      Tests  155 passed (155)\n   Start at  21:42:23\n   Duration  3.60s (tests 32%, environment 28%, import 28%, transform 6%, setup 4%, worker 1%)\n\n    Isolate  12 workers spawned · ~314ms startup each (spawn + environment, per file)\n             at least ~942ms faster with isolate: false — reuses workers across files instead of one per file\n\nJSON report written to /home/user/agentic_engineering_AI_v1/output/re-platform-codebase/reports/test-results.json"
+    },
+    {
+      "name": "Production build (tsc + Vite)",
+      "command": "npm run build",
+      "ok": true,
+      "exitCode": 0,
+      "durationMs": 2254,
+      "outputTail": "> npm run build:server && npm run build:web\n\n\n> re-platform@1.0.0 build:server\n> tsc -p tsconfig.build.json\n\n\n> re-platform@1.0.0 build:web\n> vite build --config web/vite.config.ts\n\nvite v8.3.4 building client environment for production...\ntransforming...\n✓ 23 modules transformed.\nrendering chunks...\ncomputing gzip size...\nweb/dist/index.html                   0.52 kB │ gzip:  0.33 kB\nweb/dist/assets/index-Bb5KNKC8.css    9.10 kB │ gzip:  2.61 kB\nweb/dist/assets/index-BBwAb_gX.js   241.49 kB │ gzip: 75.07 kB │ map: 1,108.66 kB\n\n✓ built in 615ms"
+    },
+    {
+      "name": "Live HTTP smoke test (built server, offline agents)",
+      "command": "node dist/server/index.js (PORT=3917, RE_AI_MODE=offline)",
+      "ok": true,
+      "exitCode": null,
+      "durationMs": 694,
+      "outputTail": "ok  server starts and reports healthy — http://127.0.0.1:3917\nok  GET /api/health — aiMode=offline\nok  security headers\nok  GET /api/paradigms lists Mendix and OutSystems — mendix:52 rules, outsystems:44 rules\nok  POST /api/sessions (Mendix) — stories=4 nfrs=5 score=100 passed=true risks=3\nok  POST /api/sessions (OutSystems, 3-layer canvas) — modules=ExpensePortal, ExpensePortal_BL, ExpensePortal_CS, Sap_IS, ExpensePortal_Th score=100\nok  PUT /api/sessions/:id/paradigm (Mendix → OutSystems) — history=created → paradigm-switched\nok  OutSystems engine rejects cycle, upward ref and unsafe SQL — OS-ARCH-001, OS-ARCH-003, OS-DATA-001, OS-DATA-002, OS-DATA-003, RE-NFR-004\nok  Mendix engine rejects persisted view model, UI state, page-only microflow, oversized microflow — MX-DM-001, MX-DM-002, MX-MF-001, MX-RT-001, RE-NFR-004\nok  invalid input → 400 validation_error\nok  GET / serves the web UI — 527 bytes"
+    }
+  ],
+  "tests": {
+    "total": 155,
+    "passed": 155,
+    "failed": 0,
+    "files": [
+      {
+        "file": "tests/web/App.test.tsx",
+        "status": "passed",
+        "tests": 4,
+        "failed": 0
+      },
+      {
+        "file": "tests/web/ParadigmSelector.test.tsx",
+        "status": "passed",
+        "tests": 5,
+        "failed": 0
+      },
+      {
+        "file": "tests/agents/anthropic-provider.test.ts",
+        "status": "passed",
+        "tests": 7,
+        "failed": 0
+      },
+      {
+        "file": "tests/agents/runner.test.ts",
+        "status": "passed",
+        "tests": 18,
+        "failed": 0
+      },
+      {
+        "file": "tests/analysis/analysis.test.ts",
+        "status": "passed",
+        "tests": 19,
+        "failed": 0
+      },
+      {
+        "file": "tests/engines/common-rules.test.ts",
+        "status": "passed",
+        "tests": 15,
+        "failed": 0
+      },
+      {
+        "file": "tests/engines/mendix.test.ts",
+        "status": "passed",
+        "tests": 32,
+        "failed": 0
+      },
+      {
+        "file": "tests/engines/outsystems.test.ts",
+        "status": "passed",
+        "tests": 26,
+        "failed": 0
+      },
+      {
+        "file": "tests/engines/registry.test.ts",
+        "status": "passed",
+        "tests": 6,
+        "failed": 0
+      },
+      {
+        "file": "tests/server/app.test.ts",
+        "status": "passed",
+        "tests": 14,
+        "failed": 0
+      },
+      {
+        "file": "tests/services/pipeline.test.ts",
+        "status": "passed",
+        "tests": 6,
+        "failed": 0
+      },
+      {
+        "file": "tests/shared/schemas.test.ts",
+        "status": "passed",
+        "tests": 3,
+        "failed": 0
+      }
+    ]
+  },
+  "smoke": [
+    {
+      "name": "server starts and reports healthy",
+      "ok": true,
+      "detail": "http://127.0.0.1:3917"
+    },
+    {
+      "name": "GET /api/health",
+      "ok": true,
+      "detail": "aiMode=offline"
+    },
+    {
+      "name": "security headers",
+      "ok": true
+    },
+    {
+      "name": "GET /api/paradigms lists Mendix and OutSystems",
+      "ok": true,
+      "detail": "mendix:52 rules, outsystems:44 rules"
+    },
+    {
+      "name": "POST /api/sessions (Mendix)",
+      "ok": true,
+      "detail": "stories=4 nfrs=5 score=100 passed=true risks=3"
+    },
+    {
+      "name": "POST /api/sessions (OutSystems, 3-layer canvas)",
+      "ok": true,
+      "detail": "modules=ExpensePortal, ExpensePortal_BL, ExpensePortal_CS, Sap_IS, ExpensePortal_Th score=100"
+    },
+    {
+      "name": "PUT /api/sessions/:id/paradigm (Mendix → OutSystems)",
+      "ok": true,
+      "detail": "history=created → paradigm-switched"
+    },
+    {
+      "name": "OutSystems engine rejects cycle, upward ref and unsafe SQL",
+      "ok": true,
+      "detail": "OS-ARCH-001, OS-ARCH-003, OS-DATA-001, OS-DATA-002, OS-DATA-003, RE-NFR-004"
+    },
+    {
+      "name": "Mendix engine rejects persisted view model, UI state, page-only microflow, oversized microflow",
+      "ok": true,
+      "detail": "MX-DM-001, MX-DM-002, MX-MF-001, MX-RT-001, RE-NFR-004"
+    },
+    {
+      "name": "invalid input → 400 validation_error",
+      "ok": true
+    },
+    {
+      "name": "GET / serves the web UI",
+      "ok": true,
+      "detail": "527 bytes"
+    }
+  ]
+}

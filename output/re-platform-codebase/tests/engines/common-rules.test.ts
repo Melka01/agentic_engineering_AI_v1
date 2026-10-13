@@ -141,6 +141,21 @@ describe('NFR validation', () => {
     expect(ruleIds([story('US-001')], [...baselineNfrs, compatible])).not.toContain('RE-NFR-005');
   });
 
+  it('RE-NFR-005 compares time targets across units', () => {
+    const inMs = nfr('NFR-004', {
+      category: 'performance',
+      statement: 'Pages take at least 5000 ms.',
+      metric: { name: 'response time', comparator: '>=', target: 5000, unit: 'ms' },
+    });
+    expect(ruleIds([story('US-001')], [...baselineNfrs, inMs])).toContain('RE-NFR-005');
+    const compatibleMs = nfr('NFR-004', {
+      category: 'performance',
+      statement: 'Pages load within 1500 ms.',
+      metric: { name: 'response time', comparator: '<=', target: 1500, unit: 'ms' },
+    });
+    expect(ruleIds([story('US-001')], [...baselineNfrs, compatibleMs])).not.toContain('RE-NFR-005');
+  });
+
   it('RE-NFR-006 flags availability above the managed-cloud ceiling for both paradigms', () => {
     const fourNines = nfr('NFR-003', {
       category: 'availability',

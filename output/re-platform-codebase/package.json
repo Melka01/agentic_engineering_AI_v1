@@ -19,7 +19,9 @@
     "lint:fix": "biome check --write .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "verify": "node scripts/verify.mjs"
+    "verify": "node scripts/verify.mjs",
+    "smoke:live": "tsx scripts/live-smoke.ts",
+    "docs:rules": "tsx scripts/generate-rules-doc.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "0.133.0",
