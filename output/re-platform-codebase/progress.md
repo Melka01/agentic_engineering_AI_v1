@@ -21,6 +21,9 @@ Active constraints:
 - `tests/agents/{runner,anthropic-provider}.test.ts`
 - `src/engines/{types,engine}.ts`, `src/engines/mendix/{index,rules,thresholds,xpath}.ts`
 - `tests/engines/mendix.test.ts`, `tests/fixtures/mendix.ts`
+- `src/engines/{story-rules,nfr-rules,coverage,registry}.ts`, `src/engines/outsystems/{index,rules,graph,thresholds}.ts`
+- `src/analysis/{text,lexicon,concepts,story-extractor,normalize,risk}.ts`, `src/analysis/blueprint/{index,mendix,outsystems}.ts`
+- `tests/engines/{outsystems,common-rules,registry}.test.ts`, `tests/fixtures/outsystems.ts`, `tests/analysis/analysis.test.ts`
 
 ## Completed
 - **Session settings (Layer 6):** `get_session` → model `claude-opus-5-5`, effort `xhigh`, permission mode `auto`. Prompt text does not change runtime effort.
@@ -34,5 +37,8 @@ Active constraints:
 - **Loop 3 — Mendix engine:** fault-tolerant rule runtime (crashing rule → `ENGINE-001`), scoring, per-story compliance; 28 Mendix rules: domain/view-model separation (MX-DM-001…006), nanoflow round trips (MX-RT-001…003), microflow complexity & loop data access (MX-MF-001…008), XPath analyser + rules (MX-XP-000…006), offline (MX-OFF-001…003), integrity (MX-INT-001). Thresholds configurable.
   Checks: `vitest run --project node` → 60/60 passed (32 Mendix); `tsc` → 0 errors; Biome clean (`noThenProperty` disabled for Gherkin `then`).
 
+- **Loop 4 — OutSystems engine + analysis:** 21 OutSystems rules (canvas layering OS-ARCH-001/002/004, Tarjan cycle detection OS-ARCH-003, encapsulation OS-ENC-001…007, data access OS-DATA-001…007, async OS-ASYNC-001, integrity OS-INT-001/002); 12 INVEST story rules, 9 NFR rules (measurability, coverage, conflicts, platform feasibility), 2 traceability rules; paradigm engine registry; deterministic backlog extractor, concept model, Mendix/OutSystems blueprint synthesisers (compliant by construction), risk register (findings + NFR + backlog shape, agent-risk merge).
+  Checks: `vitest run --project node` → 125/125 passed; invariant "deterministic blueprint has zero design findings" holds for 4 samples × 2 paradigms; `tsc` → 0 errors; Biome clean.
+
 ## Next action
-Loop 4 — OutSystems engine (canvas layers, dependency cycles, encapsulation, aggregates vs SQL), common story/NFR rules, engine registry, risk assessment, deterministic story extraction + blueprint synthesis.
+Loop 5 — pipeline/session service, Fastify API, React UI with paradigm selector, verify script + verification report, then review pass (checks.md).

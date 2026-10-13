@@ -6,6 +6,7 @@
  *  MX-MF-*   microflow complexity and data access in flows
  *  MX-XP-*   XPath optimisation
  *  MX-OFF-*  offline-first constraints
+ *  MX-ASYNC-* asynchronous processing for bulk work
  *  MX-INT-*  model integrity (dangling references)
  */
 import type { UserStory } from '../../shared/domain.js';
@@ -683,6 +684,33 @@ const offlineStoriesRealised: RuleDefinition<MendixContext> = {
 };
 
 // ---------------------------------------------------------------------------
+// Asynchronous processing
+// ---------------------------------------------------------------------------
+
+const bulkStoriesRunAsync: RuleDefinition<MendixContext> = {
+  id: 'MX-ASYNC-001',
+  title: 'Bulk work runs in scheduled events or task queues',
+  category: 'async-processing',
+  severity: 'warning',
+  rationale: 'Bulk imports and batch updates in page-triggered microflows block the user and risk request timeouts.',
+  evaluate: (ctx) =>
+    ctx.stories
+      .filter((s) => s.tags.some((t) => t.toLowerCase() === 'bulk'))
+      .filter(
+        (s) =>
+          ![...ctx.microflows.values()].some(
+            ({ item }) => item.calledFrom === 'scheduled-event' && item.storyRefs.includes(s.id),
+          ),
+      )
+      .map((s) => ({
+        message: `Bulk story ${s.id} is not realised by a scheduled-event (or task queue) microflow.`,
+        target: { kind: 'story' as const, id: s.id },
+        remediation: 'Process the work in an SCE_ microflow (or task queue) in batches, committing per batch.',
+        storyRefs: [s.id],
+      })),
+};
+
+// ---------------------------------------------------------------------------
 // Model integrity
 // ---------------------------------------------------------------------------
 
@@ -777,5 +805,6 @@ export const MENDIX_RULES: readonly RuleDefinition<MendixContext>[] = [
   offlineDataSources,
   offlineMicroflowActions,
   offlineStoriesRealised,
+  bulkStoriesRunAsync,
   referencesResolve,
 ];
