@@ -7,9 +7,10 @@ import { SessionView } from './components/SessionView.js';
 
 export interface AppProps {
   readonly api?: ApiClient;
+  readonly formDefaults?: Partial<SessionInputDraft>;
 }
 
-export function App({ api }: AppProps) {
+export function App({ api, formDefaults = {} }: AppProps) {
   const client = useMemo(() => api ?? createApiClient(), [api]);
   const [health, setHealth] = useState<Health | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -67,7 +68,7 @@ export function App({ api }: AppProps) {
       </header>
       <main>
         {session === null ? (
-          <SessionForm busy={busy} error={error} onSubmit={create} />
+          <SessionForm defaults={formDefaults} busy={busy} error={error} onSubmit={create} />
         ) : (
           <SessionView
             session={session}

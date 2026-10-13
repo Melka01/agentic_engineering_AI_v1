@@ -2,7 +2,6 @@
  * Session lifecycle: create (full pipeline), read, list and switch paradigm
  * (keeps the backlog, re-synthesises and re-validates for the new platform).
  */
-import { randomUUID } from 'node:crypto';
 import { createEngine, type EngineOptions } from '../engines/registry.js';
 import type { ValidationInput } from '../engines/types.js';
 import type { Paradigm, ValidationReport } from '../shared/domain.js';
@@ -77,7 +76,7 @@ export class SessionService {
     this.repository = options.repository;
     this.engineOptions = options.engineOptions ?? {};
     this.now = options.now ?? (() => new Date());
-    this.newId = options.newId ?? randomUUID;
+    this.newId = options.newId ?? (() => globalThis.crypto.randomUUID());
   }
 
   async create(input: SessionInput, signal?: AbortSignal): Promise<Session> {

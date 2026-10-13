@@ -21,7 +21,8 @@
     "test:watch": "vitest",
     "verify": "node scripts/verify.mjs",
     "smoke:live": "tsx scripts/live-smoke.ts",
-    "docs:rules": "tsx scripts/generate-rules-doc.ts"
+    "docs:rules": "tsx scripts/generate-rules-doc.ts",
+    "build:demo": "node scripts/build-demo.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "0.133.0",

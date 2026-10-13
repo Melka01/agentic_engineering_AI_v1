@@ -13,16 +13,18 @@ Pages must load within 2 seconds for 500 concurrent users.
 All personal data must be encrypted and handled according to GDPR.`;
 
 export interface SessionFormProps {
+  /** Pre-filled values (e.g. a clearly labelled example in the browser demo). */
+  readonly defaults?: Partial<SessionInputDraft>;
   readonly busy: boolean;
   readonly error: string | null;
   readonly onSubmit: (input: SessionInputDraft) => void;
 }
 
-export function SessionForm({ busy, error, onSubmit }: SessionFormProps) {
-  const [paradigm, setParadigm] = useState<Paradigm>('mendix');
-  const [projectName, setProjectName] = useState('');
-  const [requirementsText, setRequirementsText] = useState('');
-  const [domainContext, setDomainContext] = useState('');
+export function SessionForm({ defaults = {}, busy, error, onSubmit }: SessionFormProps) {
+  const [paradigm, setParadigm] = useState<Paradigm>(defaults.paradigm ?? 'mendix');
+  const [projectName, setProjectName] = useState(defaults.projectName ?? '');
+  const [requirementsText, setRequirementsText] = useState(defaults.requirementsText ?? '');
+  const [domainContext, setDomainContext] = useState(defaults.domainContext ?? '');
 
   const submit = (event: FormEvent) => {
     event.preventDefault();

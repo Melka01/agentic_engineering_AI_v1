@@ -13,7 +13,6 @@
  * Every attempt is logged with a correlation id and recorded in the run trace
  * that is returned to the caller (and surfaced in the UI).
  */
-import { randomUUID } from 'node:crypto';
 import type { z } from 'zod';
 import type { AgentAttempt, AgentRunTrace, AttemptOutcome } from '../shared/domain.js';
 import { AgentRunError, ProviderError, type ProviderErrorKind, toProviderError } from './errors.js';
@@ -110,7 +109,7 @@ export class AgentRunner {
   }
 
   async run<I, O>(agent: AgentDefinition<I, O>, input: I, options: AgentRunOptions = {}): Promise<AgentRunResult<O>> {
-    const correlationId = options.correlationId ?? randomUUID();
+    const correlationId = options.correlationId ?? globalThis.crypto.randomUUID();
     const startedAt = new Date().toISOString();
     const t0 = this.now();
     const attempts: AgentAttempt[] = [];

@@ -31,6 +31,12 @@ npm run dev:server     # API on :3000
 npm run dev:web        # UI on :5173, proxies /api to :3000
 ```
 
+### Browser demo (no server)
+
+`npm run build:demo` writes `web/demo/dist/re-studio.html`, a single self-contained page. It runs the
+real rule engines and the offline agents in the browser, so it works without a server or API key.
+Claude-generated content still needs the server.
+
 ### AI configuration
 
 Copy `.env.example` to `.env` (or export the variables):
@@ -103,9 +109,9 @@ src/engines    rule runtime, Mendix + OutSystems engines, story/NFR/traceability
 src/analysis   deterministic extractor, concept model, blueprint synthesisers, risk assessment
 src/services   pipeline orchestration and session lifecycle
 src/server     config, composition root, HTTP routes, entry point
-web/           React UI (paradigm selector, results panels)
+web/           React UI (paradigm selector, results panels); web/demo = standalone browser demo
 tests/         unit, integration, end-to-end with mocked agents, and UI tests
-scripts/       verify.mjs, live-smoke.ts, generate-rules-doc.ts
+scripts/       verify.mjs, live-smoke.ts, generate-rules-doc.ts, build-demo.mjs
 docs/          ARCHITECTURE.md, RULES.md (generated), HARNESS.md, SOURCES.md
 ```
 
