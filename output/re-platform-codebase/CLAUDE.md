@@ -32,6 +32,7 @@ platform's best practices. A risk register is derived from the findings.
 ## Conventions
 - ESM + `NodeNext`; relative imports use the `.js` extension.
 - Strict TS (`exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`); no `any`, no `!`.
+- Biome `noThenProperty` is off: acceptance criteria use the Gherkin field `then` (a string, never a thenable).
 - Rule ids: `RE-US-*` (stories), `RE-NFR-*` (NFRs), `MX-*` (Mendix), `OS-*` (OutSystems).
 - Default model `claude-opus-5-5`, fallback provider `claude-sonnet-5-5`; both configurable via env.
 

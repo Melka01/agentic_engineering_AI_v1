@@ -30,7 +30,6 @@ export type Priority = z.infer<typeof PrioritySchema>;
 export const AcceptanceCriterionSchema = z.object({
   given: z.string(),
   when: z.string(),
-  // biome-ignore lint/suspicious/noThenProperty: Gherkin "then" clause is a plain string, never a thenable function.
   then: z.string(),
 });
 export type AcceptanceCriterion = z.infer<typeof AcceptanceCriterionSchema>;
